@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Calculate Distance Between Points</h1>
+        </div>
+        <div class="col-md-12 d-flex justify-content-center">
+            <form method="POST" action="{{ url_for('calculate_distance') }}" class="text-center">
+                <div class="mb-3">
+                    <label for="date1" class="form-label"><strong>Date Point 1</strong></label>
+                    <input type="date" class="form-control" id="date1" name="date1" required>
+                    <input type="time" step="1" class="form-control" id="time1" name="time1" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date2" class="form-label"><strong>Date Point 2</strong></label>
+                    <input type="date" class="form-control" id="date2" name="date2" required>
+                    <input type="time" step="1" class="form-control" id="time2" name="time2" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Calculate Distance</button>
+            </form>
+        </div>
+        {% if distance is not none %}
+        <div class="col-md-12">
+            <h2 class="text-center mt-4">Distance: {{ distance }} meters</h2>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

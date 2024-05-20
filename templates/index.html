@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Dynamic GPS Data</h1>
+<p>Latitude: <span id="latitude">Loading...</span></p>
+<p>Longitude: <span id="longitude">Loading...</span></p>
+<p>Timestamp: <span id="timestamp">Loading...</span></p>
+<p>Date: <span id="date">Loading...</span></p>
+
+<script>
+    function updateGPSData() {
+        fetch('/get_latest_data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('latitude').textContent = data.Latitude;
+                document.getElementById('longitude').textContent = data.Longitude;
+                document.getElementById('timestamp').textContent = data.Timestamp;
+                document.getElementById('date').textContent = data.Date;
+            })
+            .catch(error => console.error('Error fetching GPS data:', error));
+    }
+
+    // Update GPS data every 5 seconds
+    setInterval(updateGPSData, 5000);
+
+    // Initial data fetch
+    updateGPSData();
+</script>
+{% endblock %}

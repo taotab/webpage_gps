@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Calculate Distance Between Points</h1>
+        </div>
+        <div class="col-md-12 d-flex justify-content-center">
+            <!-- Form to collect point IDs from the user -->
+            <form method="POST" action="{{ url_for('calculate_distance') }}" class="text-center">
+                <!-- Input field for the first point ID with custom CSS class -->
+                <div class="mb-3">
+                    <label for="point1_id" class="form-label"><strong>Point 1 ID</strong></label>
+                    <input type="number" class="form-control small-input" id="point1_id" name="point1_id" required>
+                </div>
+                <!-- Input field for the second point ID with custom CSS class -->
+                <div class="mb-3">
+                    <label for="point2_id" class="form-label"><strong>Point 2 ID</strong></label>
+                    <input type="number" class="form-control small-input" id="point2_id" name="point2_id" required>
+                </div>
+                <!-- Submit button to send the form data -->
+                <button type="submit" class="btn btn-primary">Calculate Distance</button>
+            </form>
+        </div>
+        <!-- Display the calculated distance if it is available -->
+        {% if distance is not none %}
+        <div class="col-md-12">
+            <h2 class="text-center mt-4">Distance: {{ distance }} meters</h2>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

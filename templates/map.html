@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="map"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var map;
+        var markers = [];
+
+        // Define icons for the latest and other markers
+        var latestMarkerIcon = L.icon({
+            iconUrl: 'https://cdn.mapmarker.io/api/v1/pin?size=50&background=%23FF0000&text=%20&icon=fa-map-marker', // Red marker icon
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        var defaultMarkerIcon = L.icon({
+            iconUrl: 'https://cdn.mapmarker.io/api/v1/pin?size=50&background=%2300A0FF&text=%20&icon=fa-map-marker', // Blue marker icon
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        });
+
+        function initializeMap(lat, lng) {
+            map = L.map('map').setView([lat, lng], 17); // Set initial view closer to the current location with a higher zoom level
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        function fetchAllCoordinates() {
+            $.getJSON('/api/get_all_coordinates', function (data) {
+                // Set the initial view based on the latest coordinates
+                if (!map) {
+                    var latestCoord = data[0];
+                    initializeMap(latestCoord.latitude, latestCoord.longitude);
+                }
+
+                // Keep existing markers and update their positions
+                data.forEach(function (coord, index) {
+                    var latlng = [coord.latitude, coord.longitude];
+                    var marker;
+                    if (markers[index]) {
+                        // Update existing marker position
+                        marker = markers[index];
+                        marker.setLatLng(latlng);
+                        if (index === 0) {
+                            // Update icon for the latest marker
+                            marker.setIcon(latestMarkerIcon);
+                        }
+                    } else {
+                        // Create new marker
+                        if (index === 0) {
+                            // Latest marker
+                            marker = L.marker(latlng, { icon: latestMarkerIcon }).addTo(map);
+                            marker.setZIndexOffset(1000); // Make the latest marker always on top
+                        } else {
+                            // Other markers
+                            marker = L.marker(latlng, { icon: defaultMarkerIcon }).addTo(map);
+                        }
+                        markers.push(marker);
+                    }
+                });
+
+                // Remove extra markers if data is less than markers
+                for (var i = data.length; i < markers.length; i++) {
+                    map.removeLayer(markers[i]);
+                }
+                markers.splice(data.length);
+            });
+        }
+
+        // Initial fetch to set the map view
+        fetchAllCoordinates();
+
+        // Fetch all coordinates every 5 seconds
+        setInterval(fetchAllCoordinates, 5000);
+    });
+</script>
+{% endblock %}

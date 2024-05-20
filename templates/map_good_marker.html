@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>GPS Map</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var map = L.map('map').setView([0, 0], 2);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var markers = [];
+
+            function fetchAllCoordinates() {
+                $.getJSON('/api/get_all_coordinates', function (data) {
+                    // Remove existing markers
+                    markers.forEach(function (marker) {
+                        map.removeLayer(marker);
+                    });
+                    markers = [];
+
+                    if (data.length > 0) {
+                        data.forEach(function (coord) {
+                            var latlng = [coord.latitude, coord.longitude];
+                            var marker = L.marker(latlng).addTo(map);
+                            markers.push(marker);
+                        });
+                        map.setView([data[0].latitude, data[0].longitude], 13);
+                    }
+                });
+            }
+
+            // Fetch all coordinates every 5 seconds
+            setInterval(fetchAllCoordinates, 5000);
+
+            // Initial fetch
+            fetchAllCoordinates();
+        });
+    </script>
+</body>
+
+</html>

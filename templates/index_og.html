@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic GPS Data</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        $(document).ready(function () {
+            setInterval(function () {
+                $.getJSON('/get_latest_data', function (data) {
+                    $('#latitude').text(data.Latitude);
+                    $('#longitude').text(data.Longitude);
+                    $('#timestamp').text(data.Timestamp);
+                    $('#date').text(data.Date); // Add this line
+                });
+            }, 2000); // Update every 2 seconds
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Dynamic GPS Data</h1>
+    <a href="{{ url_for('readings') }}">View Sensor Readings History</a>
+    <p>Latitude: <span id="latitude">Loading...</span></p>
+    <p>Longitude: <span id="longitude">Loading...</span></p>
+    <p>Timestamp: <span id="timestamp">Loading...</span></p>
+    <p>Date: <span id="date">Loading...</span></p> <!-- Add this line -->
+</body>
+
+</html>

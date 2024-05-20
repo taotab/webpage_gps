@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>ESP8266 DHT Server</h1>
+<div class="container">
+
+    <!-- Add Bootstrap table classes -->
+    <table class="table table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Latitude</th>
+                <th scope="col">Longitude</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reading in readings %}
+            <tr>
+                <td>{{ reading[0] }}</td> <!-- id -->
+                <td>{{ reading[1] }}</td> <!-- latitude -->
+                <td>{{ reading[2] }}</td> <!-- longitude -->
+                <td>{{ reading[3] }}</td> <!-- timestamp -->
+                <td>{{ reading[4] }}</td> <!-- date -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
